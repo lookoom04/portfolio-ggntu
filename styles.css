@@ -1,0 +1,735 @@
+/* styles.css */
+/* ========================= */
+/* 1. Переменные и базовые стили */
+:root {
+  --font-primary: 'Segoe UI', Tahoma, Verdana, sans-serif;     /* шрифты */
+  --color-bg: #f5f5f5;                                          /* фон страницы */
+  --color-accent: #0057b7;                                      /* акцентный цвет */
+  --color-text: #333333;                                        /* основной текст */
+  --spacing-lg: 80px;
+  --spacing-md: 40px;
+  --transition-fast: 0.3s ease-in-out;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ========================= */
+/* 2. Навигация и header */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 5%;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+  transition: background var(--transition-fast);
+  z-index: 1000;
+}
+.header.scrolled {
+  background: #ffffff;
+}
+.header__logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--color-accent);
+}
+.nav__list {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+.nav__item a {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 500;
+  position: relative;
+  transition: color var(--transition-fast);
+}
+.nav__item a::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: -4px;
+  width: 0; height: 2px;
+  background: var(--color-accent);
+  transition: width var(--transition-fast), left var(--transition-fast);
+}
+.nav__item a:hover {
+  color: var(--color-accent);
+}
+.nav__item a:hover::after {
+  width: 100%; left: 0;
+}
+
+/* ========================= */
+/* 3. Hero с параллаксом */
+.hero {
+  height: 100vh;
+  background: url('src/img/img1.jpg') center/cover fixed no-repeat;  /* рандомное фото кампуса */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  padding: var(--spacing-lg) 5%;
+  position: relative;
+  overflow: hidden;
+}
+.hero__title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  animation: fadeInUp 1s ease-out forwards;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.7);
+}
+.hero__subtitle {
+  font-size: 1.5rem;
+  opacity: 0;
+  animation: fadeInUp 1s ease-out forwards 0.5s;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.7);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* тёмно-синий градиент – полупрозрачный «вуаль» */
+  background: linear-gradient(180deg, rgba(0,87,183,0.6), rgba(0,0,0,0.5));
+  pointer-events: none;
+  z-index: 1;
+}
+.hero {
+  background-attachment: fixed;
+  animation: heroParallax 20s linear infinite;
+}
+@keyframes heroParallax {
+  0%   { background-position: center top; }
+  100% { background-position: center bottom; }
+}
+
+/* ========================= */
+/* 4. Общие стили секций */
+section {
+  padding: var(--spacing-md) 5%;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.section__heading {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  text-align: center;
+  position: relative;
+}
+.section__heading::after {
+  content: '';
+  display: block;
+  width: 60px; height: 4px;
+  background: var(--color-accent);
+  margin: 10px auto 0;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease-out forwards 0.3s;
+}
+
+/* ========================= */
+/* Сетка карточек факультетов */
+.faculties-section {
+  padding: var(--spacing-lg) 5%;
+  background: #ffffff;
+}
+.faculties__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+/* ========================= */
+/* Карточка факультета */
+.faculty-card {
+  position: relative;
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 30px 20px 20px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  transform: translateY(20px) scale(0.95);
+  opacity: 0;
+  animation: facultyAppear 0.8s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.15s + 0.2s);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  overflow: hidden;
+}
+.faculty-card:hover {
+  transform: translateY(-5px) scale(1);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* Иконка */
+.faculty-card__icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  transition: transform var(--transition-fast);
+}
+.faculty-card:hover .faculty-card__icon {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Заголовок и текст */
+.faculty-card__title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--color-accent);
+}
+.faculty-card__desc {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Анимация появления карточек */
+@keyframes facultyAppear {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ======= Секция Программ ======= */
+.programs-section {
+  padding: var(--spacing-lg) 5%;
+  background: #eef4fb; /* лёгкий градиент-воздух */
+}
+
+/* Заголовок */
+.programs-section .section__heading {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Сетка программ */
+.programs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+/* Карточка программы */
+.program-card {
+  --bg-color: #ffffff;
+  position: relative;
+  background: var(--bg-color);
+  border-radius: 16px;
+  padding: 40px 20px 20px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transform: translateY(20px) scale(0.95);
+  opacity: 0;
+  animation: programAppear 0.8s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.2s + 0.2s);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  perspective: 800px;
+  overflow: hidden;
+}
+
+@keyframes programAppear {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Иконка */
+.program-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  transition: transform var(--transition-fast);
+}
+
+/* Заголовок и текст */
+.program-card__title {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: var(--color-accent);
+}
+.program-card__desc {
+  font-size: 1rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+/* Hover-эффект 3D */
+.program-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.12);
+}
+.program-card:hover .program-card__icon {
+  transform: rotate(-15deg) scale(1.1);
+}
+.program-card:hover .program-card__title,
+.program-card:hover .program-card__desc {
+  transform: translateZ(15px) rotateX(5deg);
+  transition: transform var(--transition-fast);
+}
+
+
+
+/* ========================= */
+/* 6. Новости и галерея */
+/* ======= Секция Новости ======= */
+.news-section {
+  padding: var(--spacing-lg) 5%;
+  background: #fffefa; /* чуть тёплый фон */
+}
+
+/* Список новостей */
+.news__list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 0;
+}
+
+/* Карточка новости */
+.news-item {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px 20px 30px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transform: translateY(30px) scale(0.95);
+  opacity: 0;
+  animation: newsAppear 0.8s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.2s + 0.2s);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.news-item:hover {
+  transform: translateY(-5px) scale(1);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.16);
+}
+
+/* Дата */
+.news-item__date {
+  display: inline-block;
+  background: var(--color-accent);
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+/* Заголовок */
+.news-item__title {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+/* Текст */
+.news-item__text {
+  font-size: 0.95rem;
+  color: #555555;
+  line-height: 1.5;
+}
+
+/* Анимация появления */
+@keyframes newsAppear {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Адаптив: горизонтальный слайдер на маленьких экранах */
+@media (max-width: 600px) {
+  .news__list {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding-bottom: 10px;
+  }
+  .news-item {
+    flex: 0 0 260px;
+  }
+}
+
+
+/* ========================= */
+/* 6. Новости и галерея */
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+.gallery__grid img {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+.gallery__grid img:hover {
+  transform: scale(1.05);
+}
+
+/* ========================= */
+/*  Команда  */
+.team__grid {
+    display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
+  text-align: center;
+}
+.team-member img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    transition: transform var(--transition-fast);
+}
+.team-member img:hover {
+    transform: scale(1.1);
+}
+
+/* ===== FAQ Section ===== */
+.faq-section {
+  padding: var(--spacing-lg) 5%;
+  background: #f9faff;
+}
+.faq__list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Вопрос */
+.faq__question {
+  width: 100%;
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 1.1rem;
+  text-align: left;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+.faq__question:hover {
+  background: #eef2ff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* Иконка +/– */
+.faq__icon {
+  font-weight: bold;
+  font-size: 1.4rem;
+  color: var(--color-accent);
+  transition: transform var(--transition-fast);
+}
+
+/* Ответ */
+.faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 0 0 8px 8px;
+  padding: 0 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: max-height 0.5s ease, padding 0.5s ease;
+}
+
+/* Открытый элемент */
+.faq__item.open .faq__question {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.faq__item.open .faq__answer {
+  padding: 16px 20px 20px;
+  max-height: 200px; /* достаточно для одного абзаца */
+}
+.faq__item.open .faq__icon {
+  transform: rotate(45deg);
+}
+
+/* Плавное появление контента */
+.faq__answer p {
+  opacity: 0;
+  animation: fadeIn 0.4s ease-out forwards 0.3s;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+
+/* ======= Контакты ======= */
+.contacts-section {
+  padding: var(--spacing-lg) 5%;
+  background: #f0f8ff; /* мягкий фон для расслабленного восприятия */
+}
+
+/* Сетка: две колонки на десктопе, единая на мобилках */
+.contacts__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+@media (max-width: 768px) {
+  .contacts__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Контактные детали */
+.contacts__details p {
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.contacts__details a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+.contacts__details a:hover {
+  text-decoration: underline;
+}
+
+/* Форма обратной связи */
+.contacts__form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* интуитивный, минималистский дизайн формы */ 
+}
+.contacts__form label {
+  font-size: 0.9rem;
+}
+.contacts__form input,
+.contacts__form textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color var(--transition-fast);
+}
+.contacts__form input:focus,
+.contacts__form textarea:focus {
+  border-color: var(--color-accent); /* визуальный фокус для доступности */ 
+}
+.btn--primary {
+  background: var(--color-accent);
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.btn--primary:hover {
+  background: darken(var(--color-accent), 10%);
+  transform: translateY(-2px); /* лёгкий «подъём» кнопки */ 
+}
+.contacts__note {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Социальные ссылки */
+.contacts__socials {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+}
+.contacts__socials a {
+  font-size: 1rem;
+  color: var(--color-text);
+  transition: color var(--transition-fast);
+}
+.contacts__socials a:hover {
+  color: var(--color-accent);
+}
+
+/* Карта */
+.contacts__map iframe {
+  width: 100%;
+  height: 300px;
+  border: none;
+  border-radius: 8px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1)); /* мягкая тень */ 
+}
+
+/* Плавное появление секции */
+.contacts-section,
+.contacts__details,
+.contacts__form,
+.contacts__map {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease-out forwards;
+  animation-delay: 0.2s;
+}
+
+/* ========================= */
+/* футер */
+.contacts__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.contacts__map iframe {
+  width: 100%;
+  height: 250px;
+  border: none;
+  border-radius: 8px;
+}
+.footer {
+  text-align: center;
+  padding: 20px 5%;
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+/* ========================= */
+/* 9. Анимации */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}                                                                                     
+
+/* ========================= */
+/* 10. Адаптив */
+@media (max-width: 768px) {
+  .contacts__grid { grid-template-columns: 1fr; }
+  .nav__list { flex-wrap: wrap; gap: 10px; }
+}
+
+
+/* ========================= */
+/* 11. Анимация About */
+/* Секция about с фоновым градиентом и пульсацией */
+.about-section {
+  position: relative;
+  padding: var(--spacing-lg) 5%;
+  background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(245,245,245,1));
+  overflow: hidden;
+}
+.about-section::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 200px; height: 200px;
+  background: rgba(0,87,183,0.1);
+  border-radius: 50%;
+  animation: pulse 6s ease-in-out infinite; 
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 0.3; }
+  50%     { transform: scale(1.2); opacity: 0.6; }
+}
+
+/* Оформление цитаты с большими кавычками */
+.about__blockquote {
+  position: relative;
+  max-width: 800px; margin: 0 auto 30px;
+  padding: 20px 40px;
+  background: #ffffff;
+  border-left: 8px solid var(--color-accent);
+  font-style: italic;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  animation: fadeInUp 1s ease-out forwards; 
+}
+.about__blockquote::before {
+  content: '“';
+  position: absolute;
+  top: -10px; left: 20px;
+  font-size: 4rem;
+  color: var(--color-accent);
+} 
+.about__blockquote::after {
+  content: '”';
+  position: absolute;
+  bottom: -10px; right: 20px;
+  font-size: 4rem;
+  color: var(--color-accent);
+}
+
+/* Анимация появления */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Стили карточек фактов с hover-подсветкой сверху */
+.about__details {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.about__details li {
+  position: relative;
+  padding: 15px;
+  background: #ffffff;
+  border-radius: 8px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.about__details li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+.about__details li::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 4px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-fast);
+}
+.about__details li:hover::before {
+  transform: scaleX(1);
+}
+
+
+/* ========================= */
+/* 15. Дополнительные плавности */
+section {
+  scroll-margin-top: 100px; /* чтобы якорный скролл не закрывался хэдэром */
+}
